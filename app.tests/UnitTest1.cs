@@ -24,7 +24,8 @@ namespace Tests
 
         private IConfiguration getConf(){
           return new ConfigurationBuilder()
-          .AddJsonFile("/Users/dima/code/govil/CoreApiTest/app.tests/appsettings.json")
+          .SetBasePath(Directory.GetCurrentDirectory()+"/../../../")
+          .AddJsonFile("appsettings.json")
           .AddEnvironmentVariables()
           .Build();
         }

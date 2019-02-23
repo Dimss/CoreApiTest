@@ -20,9 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="appsettings.json" CopyToPublishDirectory="Always" />
+    <None Include="appsettings.json" />
   </ItemGroup>
-  
+
+
   <ItemGroup>
     <Reference Include="System.Web.Http">
       <HintPath>..\SolutionItems\System.Web.Http.dll</HintPath>
