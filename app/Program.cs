@@ -25,7 +25,8 @@ namespace app
                 {
                     IHostingEnvironment env = builderContext.HostingEnvironment;
                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddEnvironmentVariables("");
                 })
                 .UseIISIntegration()
                 .UseDefaultServiceProvider((context, options) =>
