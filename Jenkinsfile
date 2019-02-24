@@ -106,7 +106,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoServiceName()}:${getMongoServiceName()}@${getMongoServiceName()}:27017
+                        export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoServiceName()}:${getMongoServiceName()}@${getMongoServiceName()}/${getMongoServiceName()}:27017
                         export ControllerSettings__DbConfig__DbName=${getMongoServiceName()}
                         cd app.tests && dotnet test
                     """
