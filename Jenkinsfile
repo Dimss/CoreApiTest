@@ -118,16 +118,8 @@ pipeline {
             script {
                 openshift.withCluster() {
                     openshift.withProject() {
-                      def models = openshift.process( "openshift//mongodb-ephemeral",
-                        "-p=DATABASE_SERVICE_NAME=${mongoServiceName}",
-                        "-p=MONGODB_USER=${testMonogUserPass}",
-                        "-p=MONGODB_PASSWORD=${testMonogUserPass}",
-                        "-p=MONGODB_DATABASE=${testMongoDB}")
+                     
 
-
-                        def testDepTemplate = readFile('ocp/ci/unittests-resources-template.yaml')
-                        def models = openshift.process(testDepTemplate, "-p=RABBITMQ_NAME=${env.rabbitmqName}")
-                        openshift.delete(models)
 
                     }
                 }
