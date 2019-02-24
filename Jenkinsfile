@@ -97,15 +97,16 @@ pipeline {
                             //   "-p=MONGODB_PASSWORD=${testMonogUserPass}",
                             //   "-p=MONGODB_DATABASE=${testMongoDB}")
                             // echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
-                            // def models = getCiInfraDeps()
+                            def models = getCiInfraDeps()
+                            echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
                             // openshift.create(models)
-                            
-                            openshift.create(getCiInfraDeps())
-                            def dc = openshift.selector("dc/${getMongoServiceName()}")
-                            dc.untilEach(1) {
-                               echo "${it.object()}"
-                               return it.object().status.readyReplicas == 1
-                           }
+
+                           //  openshift.create(getCiInfraDeps())
+                           //  def dc = openshift.selector("dc/${getMongoServiceName()}")
+                           //  dc.untilEach(1) {
+                           //     echo "${it.object()}"
+                           //     return it.object().status.readyReplicas == 1
+                           // }
 
                         }
                     }
