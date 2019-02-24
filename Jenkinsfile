@@ -105,11 +105,11 @@ pipeline {
         stage("Run unit tests") {
             steps {
                 script {
-                    // sh """
-                    // export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017
-                    // export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
-                    // cd app.tests && dotnet test
-                    // """
+                    sh """
+                    # export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017
+                    # export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
+                    # cd app.tests && dotnet test
+                    """
                 }
             }
         }
