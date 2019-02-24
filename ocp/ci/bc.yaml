@@ -19,4 +19,4 @@ spec:
         value: "dimssss"
       - name: "DOCKER_REGISTRY"
         value: "docker.io"
-    type: JenkinsPipeline
+    type: JenkinsPipeline 
