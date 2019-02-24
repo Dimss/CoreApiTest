@@ -108,6 +108,8 @@ pipeline {
                     sh """
                     export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017
                     export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
+                    ls -all
+                    pwd 
                     cd app.test && dotnet test
                     """
                 }
