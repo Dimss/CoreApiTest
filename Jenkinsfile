@@ -90,6 +90,7 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject() {
+                            getCiInfraDeps()
                            //  openshift.create(getCiInfraDeps())
                            //  def dc = openshift.selector("dc/${getMongoServiceName()}")
                            //  dc.untilEach(1) {
