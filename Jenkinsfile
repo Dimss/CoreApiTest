@@ -81,31 +81,13 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-
-
-                        // def testMonogUserPass = "app"
-                        // def testMongoDB = "coreapitestdb"
-                        // def mongoServiceName = "mongodb-${getGitCommitShortHash()}"
-
                         openshift.withProject() {
-
-                            // def models = openshift.process( "openshift//mongodb-ephemeral",
-                            //   "-p=DATABASE_SERVICE_NAME=${mongoServiceName}",
-                            //   "-p=MONGODB_USER=${testMonogUserPass}",
-                            //   "-p=MONGODB_PASSWORD=${testMonogUserPass}",
-                            //   "-p=MONGODB_DATABASE=${testMongoDB}")
-                            // echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
-                            // def models = getCiInfraDeps()
-                            // echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
-                            // openshift.create(models)
-
                             openshift.create(getCiInfraDeps())
-                           //  def dc = openshift.selector("dc/${getMongoServiceName()}")
-                           //  dc.untilEach(1) {
-                           //     echo "${it.object()}"
-                           //     return it.object().status.readyReplicas == 1
-                           // }
-
+                            def dc = openshift.selector("dc/${getMongoServiceName()}")
+                            dc.untilEach(1) {
+                               echo "${it.object()}"
+                               return it.object().status.readyReplicas == 1
+                           }
                         }
                     }
                 }
@@ -119,9 +101,7 @@ pipeline {
             script {
                 openshift.withCluster() {
                     openshift.withProject() {
-
-
-
+                        openshift.delete(getCiInfraDeps())
                     }
                 }
             }
