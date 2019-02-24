@@ -90,12 +90,12 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject() {
-                            openshift.create(getCiInfraDeps())
-                            def dc = openshift.selector("dc/${getMongoServiceName()}")
-                            dc.untilEach(1) {
-                               echo "${it.object()}"
-                               return it.object().status.readyReplicas == 1
-                           }
+                           //  openshift.create(getCiInfraDeps())
+                           //  def dc = openshift.selector("dc/${getMongoServiceName()}")
+                           //  dc.untilEach(1) {
+                           //     echo "${it.object()}"
+                           //     return it.object().status.readyReplicas == 1
+                           // }
                         }
                     }
                 }
@@ -105,11 +105,11 @@ pipeline {
         stage("Run unit tests") {
             steps {
                 script {
-                    sh """
-                    export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017
-                    export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
-                    cd app.tests && dotnet test
-                    """
+                    // sh """
+                    // export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017
+                    // export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
+                    // cd app.tests && dotnet test
+                    // """
                 }
             }
         }
