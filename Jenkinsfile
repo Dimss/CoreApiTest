@@ -44,7 +44,6 @@ def getMongoDbName(){
 
 def getCiInfraDeps() {
 
-    def testMongoDB = "coreapitestdb"
     def models = openshift.process( "openshift//mongodb-ephemeral",
       "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
       "-p=MONGODB_USER=${getMongoUserAndPass()}",
@@ -106,8 +105,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                        export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoServiceName()}:${getMongoServiceName()}@${getMongoServiceName()}:27017/${getMongoServiceName()}
-                        export ControllerSettings__DbConfig__DbName=${getMongoServiceName()}
+                        export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017/${getMongoDbName()}
+                        export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
                         cd app.tests && dotnet test
                     """
                 }
@@ -121,7 +120,7 @@ pipeline {
             script {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        // openshift.delete(getCiInfraDeps())
+                        openshift.delete(getCiInfraDeps())
                     }
                 }
             }
