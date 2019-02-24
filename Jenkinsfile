@@ -121,7 +121,7 @@ pipeline {
             script {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        openshift.delete(getCiInfraDeps())
+                        // openshift.delete(getCiInfraDeps())
                     }
                 }
             }
