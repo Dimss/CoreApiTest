@@ -90,13 +90,12 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject() {
-                            getCiInfraDeps()
-                           //  openshift.create(getCiInfraDeps())
-                           //  def dc = openshift.selector("dc/${getMongoServiceName()}")
-                           //  dc.untilEach(1) {
-                           //     echo "${it.object()}"
-                           //     return it.object().status.readyReplicas == 1
-                           // }
+                            openshift.create(getCiInfraDeps())
+                            def dc = openshift.selector("dc/${getMongoServiceName()}")
+                            dc.untilEach(1) {
+                               echo "${it.object()}"
+                               return it.object().status.readyReplicas == 1
+                           }
                         }
                     }
                 }
@@ -107,9 +106,9 @@ pipeline {
             steps {
                 script {
                     sh """
-                    # export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017
-                    # export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
-                    # cd app.tests && dotnet test
+                        export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoServiceName()}:${getMongoServiceName()}@${getMongoServiceName()}:27017
+                        export ControllerSettings__DbConfig__DbName=${getMongoServiceName()}
+                        cd app.tests && dotnet test
                     """
                 }
             }
@@ -122,7 +121,7 @@ pipeline {
             script {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        // openshift.delete(getCiInfraDeps())
+                        openshift.delete(getCiInfraDeps())
                     }
                 }
             }
