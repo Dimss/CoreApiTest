@@ -37,7 +37,7 @@ def getMongoServiceName(){
 def getCiInfraDeps() {
     def testMonogUserPass = "app"
     def testMongoDB = "coreapitestdb"
-    openshift.withProject() {
+    // openshift.withProject() {
         def models = openshift.process( "openshift//mongodb-ephemeral",
           "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
           "-p=MONGODB_USER=${testMonogUserPass}",
@@ -45,7 +45,7 @@ def getCiInfraDeps() {
           "-p=MONGODB_DATABASE=${testMongoDB}")
         echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
         return modles
-    }
+    // }
 }
 
 def getDockerImageTag() {
