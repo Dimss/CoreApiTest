@@ -34,14 +34,22 @@ def getMongoServiceName(){
     return "mongodb-${getGitCommitShortHash()}"
 }
 
+def getMongoUserAndPass(){
+    return "app"
+}
+
+def getMongoDbName(){
+    return "coreapitestdb"
+}
+
 def getCiInfraDeps() {
-    def testMonogUserPass = "app"
+
     def testMongoDB = "coreapitestdb"
     def models = openshift.process( "openshift//mongodb-ephemeral",
       "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
-      "-p=MONGODB_USER=${testMonogUserPass}",
-      "-p=MONGODB_PASSWORD=${testMonogUserPass}",
-      "-p=MONGODB_DATABASE=${testMongoDB}")
+      "-p=MONGODB_USER=${getMongoUserAndPass()}",
+      "-p=MONGODB_PASSWORD=${getMongoUserAndPass()}",
+      "-p=MONGODB_DATABASE=${getMongoDbName()}")
     echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
     return models
 }
@@ -98,9 +106,9 @@ pipeline {
             steps {
                 script {
                     sh """
-                    export ControllerSettings__DbConfig__DbConnectionString=mongodb://10.100.102.3:27017
-                    export ControllerSettings__DbConfig__DbName=test
-                    dotnet test
+                    export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017
+                    export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
+                    cd app.test && dotnet test
                     """
                 }
             }
