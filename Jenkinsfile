@@ -67,14 +67,20 @@ pipeline {
                     openshift.withCluster() {
                         def testMonogUserPass = "app"
                         def testMongoDB = "coreapitestdb"
+                        def mongoServiceName = "mongodb-${getGitCommitShortHash()}"
                         openshift.withProject() {
-                          def models = openshift.process( "openshift//mongodb-ephemeral",
-                            // "-p=NAMESPACE=govil",
-                            "-p=DATABASE_SERVICE_NAME=mongodb-${getGitCommitShortHash()}",
-                            "-p=MONGODB_USER=${testMonogUserPass}",
-                            "-p=MONGODB_PASSWORD=${testMonogUserPass}",
-                            "-p=MONGODB_DATABASE=${testMongoDB}")
-                          echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
+                            def models = openshift.process( "openshift//mongodb-ephemeral",
+                              "-p=DATABASE_SERVICE_NAME=${mongoServiceName}",
+                              "-p=MONGODB_USER=${testMonogUserPass}",
+                              "-p=MONGODB_PASSWORD=${testMonogUserPass}",
+                              "-p=MONGODB_DATABASE=${testMongoDB}")
+                            echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
+                            openshift.create(models)
+                            def dc = openshift.selector("dc/${mongoServiceName}")
+                            dc.untilEach(1) {
+                               echo "${it.object()}"
+                               return it.object().status.readyReplicas == 1
+                           }
 
                         }
                     }
