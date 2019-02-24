@@ -20,3 +20,4 @@ spec:
       - name: "DOCKER_REGISTRY"
         value: "docker.io"
     type: JenkinsPipeline
+    

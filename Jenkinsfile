@@ -30,6 +30,24 @@ def getGitTag() {
     }
 }
 
+def getMongoServiceName(){
+    return "mongodb-${getGitCommitShortHash()}"
+}
+
+def getCiInfraDeps() {
+    def testMonogUserPass = "app"
+    def testMongoDB = "coreapitestdb"
+    openshift.withProject() {
+        def models = openshift.process( "openshift//mongodb-ephemeral",
+          "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
+          "-p=MONGODB_USER=${testMonogUserPass}",
+          "-p=MONGODB_PASSWORD=${testMonogUserPass}",
+          "-p=MONGODB_DATABASE=${testMongoDB}")
+        echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
+        return modles
+    }
+}
+
 def getDockerImageTag() {
     if (env.gitlabActionType == "TAG_PUSH") {
         return getGitTag()
@@ -65,18 +83,23 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        def testMonogUserPass = "app"
-                        def testMongoDB = "coreapitestdb"
-                        def mongoServiceName = "mongodb-${getGitCommitShortHash()}"
+                        def models = getCiInfraDeps()
+                        openshift.create(models)
+
+                        // def testMonogUserPass = "app"
+                        // def testMongoDB = "coreapitestdb"
+                        // def mongoServiceName = "mongodb-${getGitCommitShortHash()}"
+
                         openshift.withProject() {
-                            def models = openshift.process( "openshift//mongodb-ephemeral",
-                              "-p=DATABASE_SERVICE_NAME=${mongoServiceName}",
-                              "-p=MONGODB_USER=${testMonogUserPass}",
-                              "-p=MONGODB_PASSWORD=${testMonogUserPass}",
-                              "-p=MONGODB_DATABASE=${testMongoDB}")
-                            echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
-                            openshift.create(models)
-                            def dc = openshift.selector("dc/${mongoServiceName}")
+
+                            // def models = openshift.process( "openshift//mongodb-ephemeral",
+                            //   "-p=DATABASE_SERVICE_NAME=${mongoServiceName}",
+                            //   "-p=MONGODB_USER=${testMonogUserPass}",
+                            //   "-p=MONGODB_PASSWORD=${testMonogUserPass}",
+                            //   "-p=MONGODB_DATABASE=${testMongoDB}")
+                            // echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
+                            openshift.create(getCiInfraDeps())
+                            def dc = openshift.selector("dc/${getMongoServiceName()}")
                             dc.untilEach(1) {
                                echo "${it.object()}"
                                return it.object().status.readyReplicas == 1
@@ -95,9 +118,16 @@ pipeline {
             script {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        // def testDepTemplate = readFile('ocp/ci/unittests-resources-template.yaml')
-                        // def models = openshift.process(testDepTemplate, "-p=RABBITMQ_NAME=${env.rabbitmqName}")
-                        // openshift.delete(models)
+                      def models = openshift.process( "openshift//mongodb-ephemeral",
+                        "-p=DATABASE_SERVICE_NAME=${mongoServiceName}",
+                        "-p=MONGODB_USER=${testMonogUserPass}",
+                        "-p=MONGODB_PASSWORD=${testMonogUserPass}",
+                        "-p=MONGODB_DATABASE=${testMongoDB}")
+
+
+                        def testDepTemplate = readFile('ocp/ci/unittests-resources-template.yaml')
+                        def models = openshift.process(testDepTemplate, "-p=RABBITMQ_NAME=${env.rabbitmqName}")
+                        openshift.delete(models)
 
                     }
                 }
