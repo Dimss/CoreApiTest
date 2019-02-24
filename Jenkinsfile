@@ -93,6 +93,18 @@ pipeline {
                 }
             }
         }
+
+        stage("Run unit tests") {
+            steps {
+                script {
+                    sh """
+                    export ControllerSettings__DbConfig__DbConnectionString=mongodb://10.100.102.3:27017
+                    export ControllerSettings__DbConfig__DbName=test
+                    dotnet test
+                    """
+                }
+            }
+        }
     }
 
 
