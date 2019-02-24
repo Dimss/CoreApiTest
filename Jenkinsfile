@@ -157,7 +157,6 @@ pipeline {
                 openshift.withCluster() {
                     openshift.withProject() {
                         openshift.delete(getCiInfraDeps())
-
                     }
                 }
             }

@@ -20,7 +20,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-          name: "${DOCKER_REGISTRY}${DOCKER_IMAGE_NAME}"
+        name: "${DOCKER_REGISTRY}${DOCKER_IMAGE_NAME}"
       name: "${DOCKER_IMAGE_TAG}"
       importPolicy:
         scheduled: true

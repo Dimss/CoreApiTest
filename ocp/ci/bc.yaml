@@ -14,7 +14,7 @@ spec:
       - name: "GOVIL_APP_NAME"
         value: "coreapitest"
       - name: "S2I_BUILD_IMAGE"
-        value: "python:3.6"
+        value: "dotnet:2.1"
       - name: "DOCKER_IMAGE_PREFIX"
         value: "dimssss"
       - name: "DOCKER_REGISTRY"
