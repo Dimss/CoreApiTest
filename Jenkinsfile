@@ -69,7 +69,7 @@ pipeline {
                         def testMongoDB = "coreapitestdb"
                         openshift.withProject() {
                           def models = openshift.process( "openshift//mongodb-ephemeral",
-                            "-p=NAMESPACE=govil",
+                            // "-p=NAMESPACE=govil",
                             "-p=DATABASE_SERVICE_NAME=mongodb-${getGitCommitShortHash()}",
                             "-p=MONGODB_USER=${testMonogUserPass}",
                             "-p=MONGODB_PASSWORD=${testMonogUserPass}",
