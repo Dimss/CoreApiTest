@@ -44,8 +44,7 @@ parameters:
   required: true
   value: "1"
 - description: Name of the CoreApiTest instace
-  displayName: This name will be used by all objects created by CR (pods,services,deployments,
-    etc..)
+  displayName: This name will be used by all objects created by CR (pods,services,deployments,etc..)
   name: SERVICE_NAME
   required: true
 - description: Namespace name
