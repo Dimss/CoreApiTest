@@ -188,9 +188,8 @@ pipeline {
                       "-p=MONGODB_USER=${mongoDBUser}",
                       "-p=MONGODB_PASS=${mongoDBPass}",
                       "-p=MONGODB_NAME=${mongoDBName}",
-                      "-p=MONGODB_IMAGE=${mongoDBImage}"
-                      echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
-                  )
+                      "-p=MONGODB_IMAGE=${mongoDBImage}")
+                  echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
 
               }
           }
