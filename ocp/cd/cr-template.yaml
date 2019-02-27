@@ -1,0 +1,103 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: CoreApiTest
+message: CoreApiTest Custom Resource Template
+metadata:
+  annotations:
+    description: CoreApiTest Custom Resource Template
+    iconClass: fa fa-mixcloud
+    openshift.io/display-name: CoreApiTest
+    openshift.io/provider-display-name: GovIL-CoreApiTest by RH PS
+    tags: cr
+  creationTimestamp: 2019-02-27T13:23:41Z
+  name: coreapitest-cr
+  namespace: govil
+objects:
+- apiVersion: gov.il/v1alpha1
+  kind: CoreApiTest
+  metadata:
+    name: ${SERVICE_NAME}
+  spec:
+    appName: ${SERVICE_NAME}
+    containerPort: ${PORT}
+    deploymentStrategy:
+      type: gb
+      weight: 50
+    image: ${IMAGE}
+    latestRouteHost: ${LATEST_ROUTE_HOST}
+    latestRouteName: ${LATEST_ROUTE_NAME}
+    namespace: ${NAMESPACE}
+    profile: ${PROFILE}
+    resources:
+      mongo:
+        dbhost: ${MONGODB_HOST}
+        dbimage: ${MONGODB_IMAGE}
+        dbname: ${MONGODB_NAME}
+        dbpass: ${MONGODB_PASS}
+        dbuser: ${MONGODB_USER}
+    size: ${SIZE}
+parameters:
+- description: Count of instaces
+  displayName: How many instaces should be deployed
+  name: SIZE
+  required: true
+  value: "1"
+- description: Name of the CoreApiTest instace
+  displayName: This name will be used by all objects created by CR (pods,services,deployments,
+    etc..)
+  name: SERVICE_NAME
+  required: true
+- description: Namespace name
+  displayName: OpenShift project name
+  name: NAMESPACE
+  required: true
+  value: govil
+- description: CoreApiTest image
+  displayName: Docker image to use ofr CoreApiTest instace
+  name: IMAGE
+  required: true
+- description: Container port
+  displayName: Port number that should be exposed from container
+  name: PORT
+  required: true
+- description: CoreApiTest Profile
+  displayName: CoreApiTest profile
+  name: PROFILE
+  required: true
+  value: dev
+- description: Latest route host
+  displayName: The hostname for latest route, will be used only when profile is dev
+  name: LATEST_ROUTE_HOST
+  required: true
+  value: coreapitest-dev-latest.router.default.svc.cluster.local
+- description: Latest rotue name
+  displayName: The name of the latest route
+  name: LATEST_ROUTE_NAME
+  required: true
+  value: coreapitest-latest-dev
+- description: MongoDB host
+  displayName: The name of the service for mongodb instace, will be used only when
+    profile is dev
+  name: MONGODB_HOST
+  required: true
+- description: MongoDB user, will be used only when profile is dev
+  displayName: Username for mongodb
+  name: MONGODB_USER
+  required: true
+  value: app
+- description: MongoDB pass
+  displayName: Password for mongodb, will be used only when profile is dev
+  name: MONGODB_PASS
+  required: true
+  value: app
+- description: MongoDB database name
+  displayName: database name, will be used only when profile is dev
+  name: MONGODB_NAME
+  required: true
+  value: coreapitestdb
+- description: MongoDB docker image
+  displayName: Docker image to pull for MongoDB
+  name: MONGODB_IMAGE
+  required: true
+  value: docker-registry.default.svc:5000/openshift/mongodb:3.6
