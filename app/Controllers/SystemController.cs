@@ -16,7 +16,6 @@ namespace app.Controllers
 
       public SystemController(IOptions<ControllerSettings> settings)
       {
-
           Console.WriteLine(settings.Value.DbConfig.DbConnectionString);
           Console.WriteLine(settings.Value.DbConfig.DbName);
       }
