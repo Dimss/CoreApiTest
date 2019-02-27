@@ -12,7 +12,6 @@ metadata:
     tags: cr
   creationTimestamp: 2019-02-27T13:23:41Z
   name: coreapitest-cr
-  namespace: govil
 objects:
 - apiVersion: gov.il/v1alpha1
   kind: CoreApiTest
