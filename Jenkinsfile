@@ -77,6 +77,7 @@ pipeline {
         }
     }
     stages {
+
         stage('Checkout GIT Tag (in case it was pushed) ') {
 
             steps {
@@ -121,6 +122,7 @@ pipeline {
                 }
             }
         }
+
         stage("Cleanup test resources") {
            steps {
                script {
@@ -132,6 +134,7 @@ pipeline {
                }
            }
         }
+
         stage("Create S2I image stream and build configs") {
             steps {
                 script {
@@ -160,40 +163,39 @@ pipeline {
         }
 
         stage("Deploy to OpenSHift"){
-          openshift.withCluster() {
-              openshift.withProject() {
-                  def size = 1
-                  def serviceName = getAppName()
-                  def namespace = openshift.project()
-                  def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
-                  def port = 8080
-                  def latestRouteHost = "coreapitest-dev-latest.router.default.svc.cluster.local"
-                  def latestRouteName = "coreapitest-latest-dev"
-                  def mongoDBHost = "mongo-${getAppName()}"
-                  def mongoDBUser = "app"
-                  def mongoDBPass = "app"
-                  def mongoDBName = "coreapitestdb"
-                  def mongoDBImage = "docker-registry.default.svc:5000/openshift/mongodb:3.6"
-                  def crTemplate = readFile('ocp/cd/cr-template.yaml')
-                  def models = openshift.proccess(crTemplate,
-                      "-p=SIZE=${size}",
-                      "-p=SERVICE_NAME=${serviceName}",
-                      "-p=NAMESPACE=${namespace}",
-                      "-p=IMAGE=${image}",
-                      "-p=PORT=${port}",
-                      "-p=PROFILE=${getProfile()}",
-                      "-p=LATEST_ROUTE_HOST=${latestRouteHost}",
-                      "-p=LATEST_ROUTE_NAME=${latestRouteName}",
-                      "-p=MONGODB_HOST=${mongoDBHost}",
-                      "-p=MONGODB_USER=${mongoDBUser}",
-                      "-p=MONGODB_PASS=${mongoDBPass}",
-                      "-p=MONGODB_NAME=${mongoDBName}",
-                      "-p=MONGODB_IMAGE=${mongoDBImage}")
-                  echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
 
-              }
-          }
-
+             openshift.withCluster() {
+                 openshift.withProject() {
+                     def size = 1
+                     def serviceName = getAppName()
+                     def namespace = openshift.project()
+                     def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
+                     def port = 8080
+                     def latestRouteHost = "coreapitest-dev-latest.router.default.svc.cluster.local"
+                     def latestRouteName = "coreapitest-latest-dev"
+                     def mongoDBHost = "mongo-${getAppName()}"
+                     def mongoDBUser = "app"
+                     def mongoDBPass = "app"
+                     def mongoDBName = "coreapitestdb"
+                     def mongoDBImage = "docker-registry.default.svc:5000/openshift/mongodb:3.6"
+                     def crTemplate = readFile('ocp/cd/cr-template.yaml')
+                     def models = openshift.proccess(crTemplate,
+                         "-p=SIZE=${size}",
+                         "-p=SERVICE_NAME=${serviceName}",
+                         "-p=NAMESPACE=${namespace}",
+                         "-p=IMAGE=${image}",
+                         "-p=PORT=${port}",
+                         "-p=PROFILE=${getProfile()}",
+                         "-p=LATEST_ROUTE_HOST=${latestRouteHost}",
+                         "-p=LATEST_ROUTE_NAME=${latestRouteName}",
+                         "-p=MONGODB_HOST=${mongoDBHost}",
+                         "-p=MONGODB_USER=${mongoDBUser}",
+                         "-p=MONGODB_PASS=${mongoDBPass}",
+                         "-p=MONGODB_NAME=${mongoDBName}",
+                         "-p=MONGODB_IMAGE=${mongoDBImage}")
+                     echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
+                 }
+             }
         }
     }
 
