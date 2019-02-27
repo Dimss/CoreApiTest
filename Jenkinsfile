@@ -77,7 +77,7 @@ pipeline {
         }
     }
     stages {
-        
+
         stage('Checkout GIT Tag (in case it was pushed) ') {
 
             steps {
@@ -195,6 +195,7 @@ pipeline {
                                "-p=MONGODB_NAME=${mongoDBName}",
                                "-p=MONGODB_IMAGE=${mongoDBImage}")
                            echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
+                           openshift.create(models)
                        }
                    }
                }
