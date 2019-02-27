@@ -180,7 +180,7 @@ pipeline {
                            def mongoDBName = "coreapitestdb"
                            def mongoDBImage = "docker-registry.default.svc:5000/openshift/mongodb:3.6"
                            def crTemplate = readFile('ocp/cd/cr-template.yaml')
-                           def models = openshift.proccess(crTemplate,
+                           def models = openshift.process(crTemplate,
                                "-p=SIZE=${size}",
                                "-p=SERVICE_NAME=${serviceName}",
                                "-p=NAMESPACE=${namespace}",
