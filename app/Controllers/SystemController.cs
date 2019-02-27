@@ -6,7 +6,7 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-    
+
 namespace app.Controllers
 {
     [Route("api/[controller]")]
@@ -19,7 +19,6 @@ namespace app.Controllers
 
           Console.WriteLine(settings.Value.DbConfig.DbConnectionString);
           Console.WriteLine(settings.Value.DbConfig.DbName);
-
       }
 
 
