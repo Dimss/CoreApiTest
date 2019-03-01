@@ -16,9 +16,9 @@ objects:
 - apiVersion: gov.il/v1alpha1
   kind: CoreApiTest
   metadata:
-    name: ${SERVICE_NAME}
+    name: ${APP_NAME}
   spec:
-    appName: ${SERVICE_NAME}
+    appName: ${APP_NAME}
     containerPort: ${PORT}
     deploymentStrategy:
       type: gb
@@ -44,7 +44,7 @@ parameters:
   value: "1"
 - description: Name of the CoreApiTest instace
   displayName: This name will be used by all objects created by CR (pods,services,deployments,etc..)
-  name: SERVICE_NAME
+  name: APP_NAME
   required: true
 - description: Namespace name
   displayName: OpenShift project name

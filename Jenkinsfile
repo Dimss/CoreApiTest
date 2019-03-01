@@ -48,7 +48,6 @@ def getProfile(){
     } else {
         return "dev"
     }
-
 }
 
 def getCiInfraDeps() {
@@ -168,8 +167,8 @@ pipeline {
                    openshift.withCluster() {
                        openshift.withProject() {
                            def size = 1
-                           def serviceName = getAppName()
-                           def currentNamespace = openshift.project()
+                           def appName = getAppName()
+                           def namespace = openshift.project()
                            def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
                            def port = 8080
                            def latestRouteHost = "coreapitest-dev-latest.router.default.svc.cluster.local"
@@ -182,8 +181,8 @@ pipeline {
                            def crTemplate = readFile('ocp/cd/cr-template.yaml')
                            def models = openshift.process(crTemplate,
                                "-p=SIZE=${size}",
-                               "-p=SERVICE_NAME=${serviceName}",
-                               "-p=NAMESPACE=${currentNamespace}",
+                               "-p=APP_NAME=${appName}",
+                               "-p=NAMESPACE=${namespace}",
                                "-p=IMAGE=${image}",
                                "-p=PORT=${port}",
                                "-p=PROFILE=${getProfile()}",
