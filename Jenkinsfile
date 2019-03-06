@@ -167,6 +167,7 @@ pipeline {
                    openshift.withCluster() {
                        openshift.withProject() {
                            def size = 1
+                           
                            def appName = getAppName()
                            def namespace = openshift.project()
                            def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
