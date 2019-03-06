@@ -56,7 +56,8 @@ def getCiInfraDeps() {
       "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
       "-p=MONGODB_USER=${getMongoUserAndPass()}",
       "-p=MONGODB_PASSWORD=${getMongoUserAndPass()}",
-      "-p=MONGODB_DATABASE=${getMongoDbName()}")
+      "-p=MONGODB_DATABASE=${getMongoDbName()}",
+      "-p=MONGODB_VERSION=3.6")
     echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
     return models
 }
@@ -167,7 +168,7 @@ pipeline {
                    openshift.withCluster() {
                        openshift.withProject() {
                            def size = 1
-                           
+
                            def appName = getAppName()
                            def namespace = openshift.project()
                            def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
