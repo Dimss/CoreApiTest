@@ -17,6 +17,31 @@ def getAppName() {
     }
 }
 
+def getLatestRouteHost(){
+  if (env.gitlabActionType == "TAG_PUSH") {
+      return "coreapitest-lab.router.default.svc.cluster.local"
+  } else {
+      return "coreapitest-dev-latest.router.default.svc.cluster.local"
+  }
+}
+
+def getLatestRouteName(){
+  if (env.gitlabActionType == "TAG_PUSH") {
+      return "coreapitest-lab"
+  } else {
+      return "coreapitest-latest-dev"
+  }
+}
+
+def getConfSecretName(){
+  if (env.gitlabActionType == "TAG_PUSH") {
+      return "coreapitest-lab"
+  } else {
+      return getAppName()
+  }
+}
+
+
 def getGitCommitShortHash() {
     return checkout(scm).GIT_COMMIT.substring(0, 7)
 }
@@ -174,8 +199,8 @@ pipeline {
                            def namespace = openshift.project()
                            def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
                            def port = 8080
-                           def latestRouteHost = "coreapitest-dev-latest.router.default.svc.cluster.local"
-                           def latestRouteName = "coreapitest-latest-dev"
+                           def latestRouteHost = getLatestRouteHost()
+                           def latestRouteName = getLatestRouteName()
                            def mongoDBHost = "mongo-${getAppName()}"
                            def mongoDBUser = "app"
                            def mongoDBPass = "app"
@@ -185,7 +210,7 @@ pipeline {
                            def models = openshift.process(crTemplate,
                                "-p=SIZE=${size}",
                                "-p=APP_NAME=${appName}",
-                               "-p=CONF_SECRET_NAME=${appName}",
+                               "-p=CONF_SECRET_NAME=${getConfSecretName()}",
                                "-p=NAMESPACE=${namespace}",
                                "-p=IMAGE=${image}",
                                "-p=PORT=${port}",
