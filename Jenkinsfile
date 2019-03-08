@@ -155,6 +155,7 @@ pipeline {
                             def bc = openshift.selector("buildconfig/${getAppName()}")
                             def build = bc.startBuild()
                             build.logs("-f")
+                            
                             openshift.delete(models)
                         }
                     }
