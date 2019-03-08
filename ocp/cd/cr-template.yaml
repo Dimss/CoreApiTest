@@ -17,6 +17,8 @@ objects:
   kind: CoreApiTest
   metadata:
     name: ${APP_NAME}
+    labels:
+      profile: ${PROFILE}
   spec:
     appName: ${APP_NAME}
     confSecretName: ${CONF_SECRET_NAME}
