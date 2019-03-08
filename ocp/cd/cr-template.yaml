@@ -19,6 +19,7 @@ objects:
     name: ${APP_NAME}
   spec:
     appName: ${APP_NAME}
+    confSecretName: ${CONF_SECRET_NAME}
     containerPort: ${PORT}
     deploymentStrategy:
       type: gb
@@ -45,6 +46,10 @@ parameters:
 - description: Name of the CoreApiTest instace
   displayName: This name will be used by all objects created by CR (pods,services,deployments,etc..)
   name: APP_NAME
+  required: true
+- description: Name of the CoreApiTest config secret
+  displayName: App secrets that include all app configurations (db connection, etc..)
+  name: CONF_SECRET_NAME
   required: true
 - description: Namespace name
   displayName: OpenShift project name
