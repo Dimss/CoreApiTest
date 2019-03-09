@@ -23,9 +23,6 @@ objects:
     appName: ${APP_NAME}
     confSecretName: ${CONF_SECRET_NAME}
     containerPort: ${PORT}
-    deploymentStrategy:
-      type: gb
-      weight: 50
     image: ${IMAGE}
     latestRouteHost: ${LATEST_ROUTE_HOST}
     latestRouteName: ${LATEST_ROUTE_NAME}
