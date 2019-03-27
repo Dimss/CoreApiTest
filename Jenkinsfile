@@ -81,8 +81,7 @@ def getCiInfraDeps() {
             "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
             "-p=MONGODB_USER=${getMongoUserAndPass()}",
             "-p=MONGODB_PASSWORD=${getMongoUserAndPass()}",
-            "-p=MONGODB_DATABASE=${getMongoDbName()}",
-            "-p=MONGODB_VERSION=3.6")
+            "-p=MONGODB_DATABASE=${getMongoDbName()}")
     echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
     return models
 }
