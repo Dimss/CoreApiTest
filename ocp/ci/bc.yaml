@@ -5,7 +5,7 @@ metadata:
 spec:
   source:
     git:
-      uri: "http://10.166.0.11/root/coreapitest.git"
+      uri: "http://gitlab.sales.lab.tlv.redhat.com/root/coreapitest.git"
       ref: "master"
   strategy:
     jenkinsPipelineStrategy:

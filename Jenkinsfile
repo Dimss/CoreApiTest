@@ -11,34 +11,34 @@ def getJobName() {
 
 def getAppName() {
     if (env.gitlabActionType == "TAG_PUSH") {
-        return "${getJobName()}-${getGitTag()}".replaceAll("\\.","-")
+        return "${getJobName()}-${getGitTag()}".replaceAll("\\.", "-")
     } else {
-        return "${getJobName()}-${getGitCommitShortHash()}".replaceAll("\\.","-")
+        return "${getJobName()}-${getGitCommitShortHash()}".replaceAll("\\.", "-")
     }
 }
 
-def getLatestRouteHost(){
-  if (env.gitlabActionType == "TAG_PUSH") {
-      return "coreapitest-lab.router.default.svc.cluster.local"
-  } else {
-      return "coreapitest-dev-latest.router.default.svc.cluster.local"
-  }
+def getLatestRouteHost() {
+    if (env.gitlabActionType == "TAG_PUSH") {
+        return "coreapitest-lab.router.default.svc.cluster.local"
+    } else {
+        return "coreapitest-dev-latest.router.default.svc.cluster.local"
+    }
 }
 
-def getLatestRouteName(){
-  if (env.gitlabActionType == "TAG_PUSH") {
-      return "coreapitest-lab"
-  } else {
-      return "coreapitest-latest-dev"
-  }
+def getLatestRouteName() {
+    if (env.gitlabActionType == "TAG_PUSH") {
+        return "coreapitest-lab"
+    } else {
+        return "coreapitest-latest-dev"
+    }
 }
 
-def getConfSecretName(){
-  if (env.gitlabActionType == "TAG_PUSH") {
-      return "coreapitest-lab"
-  } else {
-      return getAppName()
-  }
+def getConfSecretName() {
+    if (env.gitlabActionType == "TAG_PUSH") {
+        return "coreapitest-lab"
+    } else {
+        return getAppName()
+    }
 }
 
 
@@ -55,19 +55,19 @@ def getGitTag() {
     }
 }
 
-def getMongoServiceName(){
+def getMongoServiceName() {
     return "mongodb-${getGitCommitShortHash()}"
 }
 
-def getMongoUserAndPass(){
+def getMongoUserAndPass() {
     return "app"
 }
 
-def getMongoDbName(){
+def getMongoDbName() {
     return "coreapitestdb"
 }
 
-def getProfile(){
+def getProfile() {
     if (env.gitlabActionType == "TAG_PUSH") {
         return "lab"
     } else {
@@ -77,12 +77,12 @@ def getProfile(){
 
 def getCiInfraDeps() {
 
-    def models = openshift.process( "openshift//mongodb-ephemeral",
-      "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
-      "-p=MONGODB_USER=${getMongoUserAndPass()}",
-      "-p=MONGODB_PASSWORD=${getMongoUserAndPass()}",
-      "-p=MONGODB_DATABASE=${getMongoDbName()}",
-      "-p=MONGODB_VERSION=3.6")
+    def models = openshift.process("openshift//mongodb-ephemeral",
+            "-p=DATABASE_SERVICE_NAME=${getMongoServiceName()}",
+            "-p=MONGODB_USER=${getMongoUserAndPass()}",
+            "-p=MONGODB_PASSWORD=${getMongoUserAndPass()}",
+            "-p=MONGODB_DATABASE=${getMongoDbName()}",
+            "-p=MONGODB_VERSION=3.6")
     echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
     return models
 }
@@ -127,9 +127,9 @@ pipeline {
                             openshift.create(getCiInfraDeps())
                             def dc = openshift.selector("dc/${getMongoServiceName()}")
                             dc.untilEach(1) {
-                               echo "${it.object()}"
-                               return it.object().status.readyReplicas == 1
-                           }
+                                echo "${it.object()}"
+                                return it.object().status.readyReplicas == 1
+                            }
                         }
                     }
                 }
@@ -140,7 +140,9 @@ pipeline {
             steps {
                 script {
                     sh """
-                        export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${getMongoUserAndPass()}@${getMongoServiceName()}:27017/${getMongoDbName()}
+                        export ControllerSettings__DbConfig__DbConnectionString=mongodb://${getMongoUserAndPass()}:${
+                        getMongoUserAndPass()
+                    }@${getMongoServiceName()}:27017/${getMongoDbName()}
                         export ControllerSettings__DbConfig__DbName=${getMongoDbName()}
                         cd app.tests && dotnet test
                     """
@@ -149,15 +151,15 @@ pipeline {
         }
 
         stage("Cleanup test resources") {
-           steps {
-               script {
-                   openshift.withCluster() {
-                       openshift.withProject() {
-                           openshift.delete(getCiInfraDeps())
-                       }
-                   }
-               }
-           }
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject() {
+                            openshift.delete(getCiInfraDeps())
+                        }
+                    }
+                }
+            }
         }
 
         stage("Create S2I image stream and build configs") {
@@ -189,44 +191,44 @@ pipeline {
             }
         }
 
-        stage("Deploy to OpenShift"){
-          steps {
-              script {
-                   openshift.withCluster() {
-                       openshift.withProject() {
-                           def size = 1
-                           def appName = getAppName()
-                           def namespace = openshift.project()
-                           def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
-                           def port = 8080
-                           def latestRouteHost = getLatestRouteHost()
-                           def latestRouteName = getLatestRouteName()
-                           def mongoDBHost = "mongo-${getAppName()}"
-                           def mongoDBUser = "app"
-                           def mongoDBPass = "app"
-                           def mongoDBName = "coreapitestdb"
-                           def mongoDBImage = "docker-registry.default.svc:5000/openshift/mongodb:3.6"
-                           def crTemplate = readFile('ocp/cd/cr-template.yaml')
-                           def models = openshift.process(crTemplate,
-                               "-p=SIZE=${size}",
-                               "-p=APP_NAME=${appName}",
-                               "-p=CONF_SECRET_NAME=${getConfSecretName()}",
-                               "-p=NAMESPACE=${namespace}",
-                               "-p=IMAGE=${image}",
-                               "-p=PORT=${port}",
-                               "-p=PROFILE=${getProfile()}",
-                               "-p=LATEST_ROUTE_HOST=${latestRouteHost}",
-                               "-p=LATEST_ROUTE_NAME=${latestRouteName}",
-                               "-p=MONGODB_HOST=${mongoDBHost}",
-                               "-p=MONGODB_USER=${mongoDBUser}",
-                               "-p=MONGODB_PASS=${mongoDBPass}",
-                               "-p=MONGODB_NAME=${mongoDBName}",
-                               "-p=MONGODB_IMAGE=${mongoDBImage}")
-                           echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
-                           openshift.create(models)
-                       }
-                   }
-               }
+        stage("Deploy to OpenShift") {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject() {
+                            def size = 1
+                            def appName = getAppName()
+                            def namespace = openshift.project()
+                            def image = "${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE_PREFIX}/${GOVIL_APP_NAME}:${getDockerImageTag()}"
+                            def port = 8080
+                            def latestRouteHost = getLatestRouteHost()
+                            def latestRouteName = getLatestRouteName()
+                            def mongoDBHost = "mongo-${getAppName()}"
+                            def mongoDBUser = "app"
+                            def mongoDBPass = "app"
+                            def mongoDBName = "coreapitestdb"
+                            def mongoDBImage = "docker-registry.default.svc:5000/openshift/mongodb:3.6"
+                            def crTemplate = readFile('ocp/cd/cr-template.yaml')
+                            def models = openshift.process(crTemplate,
+                                    "-p=SIZE=${size}",
+                                    "-p=APP_NAME=${appName}",
+                                    "-p=CONF_SECRET_NAME=${getConfSecretName()}",
+                                    "-p=NAMESPACE=${namespace}",
+                                    "-p=IMAGE=${image}",
+                                    "-p=PORT=${port}",
+                                    "-p=PROFILE=${getProfile()}",
+                                    "-p=LATEST_ROUTE_HOST=${latestRouteHost}",
+                                    "-p=LATEST_ROUTE_NAME=${latestRouteName}",
+                                    "-p=MONGODB_HOST=${mongoDBHost}",
+                                    "-p=MONGODB_USER=${mongoDBUser}",
+                                    "-p=MONGODB_PASS=${mongoDBPass}",
+                                    "-p=MONGODB_NAME=${mongoDBName}",
+                                    "-p=MONGODB_IMAGE=${mongoDBImage}")
+                            echo "${JsonOutput.prettyPrint(JsonOutput.toJson(models))}"
+                            openshift.create(models)
+                        }
+                    }
+                }
             }
         }
     }
