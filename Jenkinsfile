@@ -19,9 +19,9 @@ def getAppName() {
 
 def getLatestRouteHost() {
     if (env.gitlabActionType == "TAG_PUSH") {
-        return "coreapitest-lab.router.default.svc.cluster.local"
+        return "coreapitest-lab.apps.openshift.sales.lab.tlv.redhat.com"
     } else {
-        return "coreapitest-dev-latest.router.default.svc.cluster.local"
+        return "coreapitest-dev-latest.apps.openshift.sales.lab.tlv.redhat.com"
     }
 }
 
@@ -206,7 +206,7 @@ pipeline {
                             def mongoDBUser = "app"
                             def mongoDBPass = "app"
                             def mongoDBName = "coreapitestdb"
-                            def mongoDBImage = "docker-registry.default.svc:5000/openshift/mongodb:3.6"
+                            def mongoDBImage = "docker-registry.default.svc:5000/openshift/mongodb:3.2"
                             def crTemplate = readFile('ocp/cd/cr-template.yaml')
                             def models = openshift.process(crTemplate,
                                     "-p=SIZE=${size}",
