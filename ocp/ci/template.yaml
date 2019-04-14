@@ -1,0 +1,78 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app: govil-template
+  template: govil-template
+message: Test template
+metadata:
+  annotations:
+    iconClass: icon-jenkins
+    openshift.io/display-name: Govil
+    tags: govil
+  name: govil
+  namespace: openshift
+objects:
+- kind: "ImageStream"
+  apiVersion: "v1"
+  metadata:
+    name: "coreapitest"
+  spec:
+    tags:
+    - from:
+        kind: "DockerImage"
+        name: "docker-registry.default.svc:5000/govil/coreapitest:0.1"
+      name: "0.1"
+      importPolicy:
+        scheduled: true
+- kind: "BuildConfig"
+  apiVersion: "v1"
+  metadata:
+    name: "coreapitest"
+  spec:
+    runPolicy: "Serial"
+    source:
+      git:
+        uri: "https://github.com/Dimss/CoreApiTest.git"
+    strategy:
+      sourceStrategy:
+        from:
+          kind: "ImageStreamTag"
+          name: "dotnet:2.1"
+    output:
+      to:
+        kind: "ImageStreamTag"
+        name: "coreapitest:0.1"
+- apiVersion: "apps/v1"
+  kind: "Deployment"
+  metadata:
+    name: "coreapitest"
+    labels:
+      app: "coreapitest"
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: "coreapitest"
+    template:
+      metadata:
+        labels:
+          app: "coreapitest"
+      spec:
+        containers:
+        - name: "coreapitest"
+          image: "docker-registry.default.svc:5000/govil/coreapitest:0.1"
+          ports:
+          - containerPort: 8000
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: "coreapitest"
+    lables:
+      app: "coreapitest"
+  spec:
+    selector:
+      app: "coreapitest"
+    ports:
+    - name: "http"
+      port: 80
+      targetPort: 8000
